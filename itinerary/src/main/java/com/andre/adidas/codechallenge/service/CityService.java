@@ -19,7 +19,12 @@ public class CityService {
     private CityRepository cityRepository;
 
     public Iterable<City> list(Pageable pageable) {
-        log.info("Listing all cities");
+        log.info("Listing all cities paged");
         return cityRepository.findAll(pageable);
+    }
+    
+    public Iterable<City> listAll() {
+        log.info("Listing all cities");
+        return cityRepository.findAll();
     }
 }

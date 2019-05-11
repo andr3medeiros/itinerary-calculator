@@ -1,13 +1,12 @@
 package com.andre.adidas.codechallenge.auth;
 
-import lombok.Data;
-
 import java.io.Serializable;
+
+import lombok.Data;
 
 @Data
 public class  JwtAuthenticationRequest implements Serializable {
 	private static final long serialVersionUID = 820323728127302803L;
-	private String organizationName;
     private String username;
     private String email;
     private String password;
@@ -16,8 +15,7 @@ public class  JwtAuthenticationRequest implements Serializable {
         super();
     }
 
-    public JwtAuthenticationRequest(String organization, String username, String email, String password) {
-        this.setOrganizationName(organization);
+    public JwtAuthenticationRequest(String username, String email, String password) {
         this.setUsername(username);
         this.setEmail(email);
         this.setPassword(password);

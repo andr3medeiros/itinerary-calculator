@@ -15,9 +15,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import com.andre.adidas.codechallenge.entities.City;
+import com.andre.adidas.codechallenge.enums.CalcType;
 import com.andre.adidas.codechallenge.pojo.Itinerary;
 import com.andre.adidas.codechallenge.utils.RandomUtils;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -31,7 +31,7 @@ public class Calculator {
 	private Itinerary itinerary;
 	private List<City> cities;
 	
-	public Itinerary startParalel(CalcType calcType) throws JsonProcessingException {
+	public Itinerary startParalel(CalcType calcType) {
 		Itinerary processedItinerarie = new Itinerary(itinerary.getDeparture(), itinerary.getArrival());
 		processedItinerarie.setDepartureDatetime(LocalDateTime.now());
 	
@@ -58,7 +58,7 @@ public class Calculator {
 			Future<Entry<List<Integer>, List<Integer>>> future = threadPool.submit(() -> {
 				List<Integer> orderList = range(0, cityList.size());
 				List<Integer> costs = new ArrayList<>();
-				List<Integer> bestOrderList = null;
+				List<Integer> bestOrderList = orderList.stream().map(item -> pieceOfListOrder.get(item)).collect(Collectors.toList());
 				int bestTotal = Integer.MAX_VALUE;
 				
 				List<Integer> currentCost = new ArrayList<>();
@@ -113,6 +113,12 @@ public class Calculator {
 		
 		int departureIndex = reorderedCities.indexOf(processedItinerarie.getDeparture());
 		int arrivalIndex = reorderedCities.indexOf(processedItinerarie.getArrival());
+		
+		if(departureIndex > arrivalIndex) {
+			int temp = departureIndex;
+			departureIndex = arrivalIndex;
+			arrivalIndex = temp;
+		}
 		
 		reorderedCities = reorderedCities.subList(departureIndex, arrivalIndex + 1);
 		int bestTotal = costs.stream().mapToInt(Integer::intValue).sum();
@@ -213,7 +219,4 @@ public class Calculator {
 		
 		return allLists;
 	}
-	
-	enum ExecutionType {SINGLE, PARAREL};
-	enum CalcType {DISTANCE, TIME};
 }

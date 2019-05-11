@@ -1,5 +1,5 @@
 server:
-  port: 8082
+  port: 8083
 
 eureka:
   instance:
@@ -8,27 +8,25 @@ eureka:
     service-url:
       defaultZone: http://localhost:8081/eureka/
     register-with-eureka: true
-
+    
 spring:
   application:
-    name: itinerary
+    name: authentication
   jpa:
     show-sql: false
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQL9Dialect
-        jdbc:
-          lob:
-            non_contextual_creation: true
   jmx:
     enabled: false
   datasource:
     url: jdbc:postgresql://localhost/itineraries
     username: postgres
     password: andre
-
+  
+# JWT Auth
 auth:
   header: Authorization
   secret: YWRpZGFzLWNvZGUtY2hhbGxlbmdl

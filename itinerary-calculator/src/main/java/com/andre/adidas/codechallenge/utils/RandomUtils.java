@@ -30,11 +30,11 @@ public class RandomUtils {
      * @return the random integer
      */
     public static int nextInt(final int startInclusive, final int endExclusive) {
-    	if(endExclusive >= startInclusive) {
+    	if(startInclusive >= endExclusive) {
     		throw new IllegalArgumentException("Start value must be smaller or equal to end value.");
     	}
     	
-    	if(startInclusive >= 0) {
+    	if(startInclusive < 0) {
     		throw new IllegalArgumentException("Both range values must be non-negative.");
     	}
 
@@ -60,11 +60,11 @@ public class RandomUtils {
      * @return the random double
      */
     public static double nextDouble(final double startInclusive, final double endInclusive) {
-    	if(endInclusive >= startInclusive) {
+    	if(startInclusive >= endInclusive) {
     		throw new IllegalArgumentException("Start value must be smaller or equal to end value.");
     	}
     	
-    	if(startInclusive >= 0) {
+    	if(startInclusive < 0) {
     		throw new IllegalArgumentException("Both range values must be non-negative.");
     	}
 

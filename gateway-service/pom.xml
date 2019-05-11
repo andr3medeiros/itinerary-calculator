@@ -6,31 +6,24 @@
 		<groupId>com.andre.adidas.codechallenge</groupId>
 		<artifactId>adidas-code-challenge</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
-	</parent>	
-
-	<artifactId>service-discovey</artifactId>
-	<name>service-discovey</name>
-
-	<properties>
-		<java.version>1.8</java.version>
-	</properties>
+	</parent>
+	
+	<artifactId>gateway-service</artifactId>
+	<name>gateway-service</name>
 
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
+			<artifactId>spring-cloud-starter-netflix-zuul</artifactId>
 		</dependency>
 	</dependencies>
 
 	<build>
-		<finalName>service-discovery</finalName>
+		<finalName>gateway-service</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
-                    <executable>true</executable>
-                </configuration>
 			</plugin>
 		</plugins>
 	</build>
