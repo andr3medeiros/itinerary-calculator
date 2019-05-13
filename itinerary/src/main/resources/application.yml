@@ -31,5 +31,6 @@ spring:
 
 auth:
   header: Authorization
-  secret: YWRpZGFzLWNvZGUtY2hhbGxlbmdl
+  secret: bHEGcbFS9pkpQrZMweV4K6VVSlea8xbFyZDWOpt4ntQcJYOXIULIogCpMfP3OtD1
+  prefix: Bearer 
   expires: 604800

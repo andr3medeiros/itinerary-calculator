@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -30,13 +31,22 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired
     private JwtAuthenticationEntryPoint unauthorizedHandler;
 
-    @Autowired
-    private UserDetailsService userDetailsService;
+    @Override
+    @Bean
+    public UserDetailsService userDetailsServiceBean() throws Exception {
+        return new UserDetailsServiceImpl();
+    }
+    
+    @Override
+    @Bean
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
 
     @Autowired
     public void configureAuthentication(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
         authenticationManagerBuilder
-                .userDetailsService(userDetailsService)
+                .userDetailsService(userDetailsServiceBean())
                 .passwordEncoder(passwordEncoder());
     }
 
@@ -58,6 +68,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+                .addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers(
                         HttpMethod.GET,
@@ -73,12 +84,11 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/**/swagger-resources/**", "/**/webjars/springfox-swagger-ui/**", "/**/v2/api-docs/**").permitAll()
                 .antMatchers(HttpMethod.POST,"/test/**").permitAll()
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
-                .antMatchers("/api/user/passwordchange").permitAll()
-                .antMatchers("/api/auth/**").permitAll()
+                .antMatchers("/v1/auth/**").permitAll()
                 .anyRequest().authenticated();
-
-        httpSecurity
-                .addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
+//
+//        httpSecurity
+//                .addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
 
         httpSecurity.headers().cacheControl();
     }

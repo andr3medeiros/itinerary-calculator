@@ -1,5 +1,7 @@
 package com.andre.adidas.codechallenge.services;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -52,10 +54,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User save(User user) {
-    	User one = userRepository.findById(user.getId()).get();
-        if(one == null) {
-           user.setPassword(passwordEncoder.encode(user.getPassword()));
-        }
+    	if(user.getId() != null) {
+    		Optional<User> one = userRepository.findById(user.getId());
+    		if(!one.isPresent()) {
+    			user.setPassword(passwordEncoder.encode(user.getPassword()));
+    		}
+    	} else {
+    		user.setPassword(passwordEncoder.encode(user.getPassword()));
+    	}
         
         return userRepository.save(user);
     }

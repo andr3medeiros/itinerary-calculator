@@ -1,3 +1,5 @@
+INSERT INTO users (id,email,name,password,password_resetuuid,username,role_id) VALUES (1,'user@adidas.com',NULL,'$2a$10$ZGgOdPaEXTwoHzvjz/i5ieRH60pWXO.OO3QwyiGapnTtuWGfRxcWe',NULL,'adidas',NULL);
+
 INSERT INTO cities (id,name,x,y) VALUES (1,'Mertzfurt',3,11);
 INSERT INTO cities (id,name,x,y) VALUES (2,'East Carrolshire',4,4);
 INSERT INTO cities (id,name,x,y) VALUES (3,'Simonisbury',11,9);

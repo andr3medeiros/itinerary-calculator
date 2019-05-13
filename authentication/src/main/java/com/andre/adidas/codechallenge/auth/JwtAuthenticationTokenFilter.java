@@ -1,5 +1,12 @@
 package com.andre.adidas.codechallenge.auth;
 
+import java.io.IOException;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -8,70 +15,73 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 /**
- * @author André da Silva Medeiros
- * Checks JWT validity
+ * @author André da Silva Medeiros Checks JWT validity
  */
 public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
-    private UserDetailsService userDetailsService;
-    private JwtUtil jwtTokenUtil;
+	private UserDetailsService userDetailsService;
+	private JwtUtil jwtTokenUtil;
 
-    @Value("${auth.header}")
-    private String tokenHeader;
+	@Value("${auth.header}")
+	private String tokenHeader;
 
-    /**
-     * Injects UserDetailsService instance
-     * @param userDetailsService to inject
-     */
-    @Autowired
-    public void setUserDetailsService(UserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
-    }
+	@Value("${auth.prefix}")
+	private String tokenPrefix;
 
-    /**
-     * Injects JwtUtil instance
-     * @param jwtUtil to inject
-     */
-    @Autowired
-    public void setJwtTokenUtil(JwtUtil jwtUtil) {
-        this.jwtTokenUtil = jwtUtil;
-    }
+	/**
+	 * Injects UserDetailsService instance
+	 * 
+	 * @param userDetailsService to inject
+	 */
+	@Autowired
+	public void setUserDetailsService(UserDetailsService userDetailsService) {
+		this.userDetailsService = userDetailsService;
+	}
 
-    /**
-     * Checks if JWT present and valid
-     * @param request with JWT
-     * @param response
-     * @param chain
-     * @throws ServletException
-     * @throws IOException
-     */
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-                                    FilterChain chain) throws ServletException, IOException {
+	/**
+	 * Injects JwtUtil instance
+	 * 
+	 * @param jwtUtil to inject
+	 */
+	@Autowired
+	public void setJwtTokenUtil(JwtUtil jwtUtil) {
+		this.jwtTokenUtil = jwtUtil;
+	}
 
-        String authToken = request.getHeader(this.tokenHeader);
-        String username = jwtTokenUtil.getUsernameFromToken(authToken);
+	/**
+	 * Checks if JWT present and valid
+	 * 
+	 * @param request  with JWT
+	 * @param response
+	 * @param chain
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	@Override
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+			throws ServletException, IOException {
 
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+		String authToken = request.getHeader(this.tokenHeader);
+		if (authToken != null) {
+			authToken = authToken.replace(tokenPrefix, "").trim();
+			String username = jwtTokenUtil.getUsernameFromToken(authToken);
 
-            if (jwtTokenUtil.validateToken(authToken, userDetails)) {
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                logger.debug("Authenticated user " + username + ", setting security context");
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            }
-        }
-        
-        chain.doFilter(request, response);
-    }
+			if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+				UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+
+				if (jwtTokenUtil.validateToken(authToken, userDetails)) {
+					UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+							userDetails, null, userDetails.getAuthorities());
+					authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+					logger.debug("Authenticated user " + username + ", setting security context");
+					SecurityContextHolder.getContext().setAuthentication(authentication);
+				}
+			}
+		}
+
+		chain.doFilter(request, response);
+	}
 
 }

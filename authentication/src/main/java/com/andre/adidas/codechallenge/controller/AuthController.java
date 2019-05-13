@@ -43,10 +43,11 @@ public class AuthController {
     @Value("${auth.header}")
     private String tokenHeader;
 
-    public final static String SIGNUP_URL = "/api/auth/signup";
-    public final static String SIGNIN_URL = "/api/auth/signin";
-    public final static String REFRESH_TOKEN_URL = "/api/auth/token/refresh";
+    public final static String SIGNUP_URL = "/v1/auth/signup";
+    public final static String SIGNIN_URL = "/v1/auth/signin";
+    public final static String REFRESH_TOKEN_URL = "/v1/auth/token/refresh";
 
+    @Autowired
     private AuthenticationManager authenticationManager;
     private JwtUtil jwtUtil;
     private UserDetailsService userDetailsService;
@@ -56,15 +57,6 @@ public class AuthController {
     @Autowired
     private PasswordEncoder passwordEncoder;
     
-    /**
-     * Injects AuthenticationManager instance
-     * @param authenticationManager to inject
-     */
-    @Autowired
-    public void setAuthenticationManager(AuthenticationManager authenticationManager) {
-        this.authenticationManager = authenticationManager;
-    }
-
     /**
      * Injects JwtUtil instance
      * @param jwtUtil to inject
@@ -150,6 +142,8 @@ public class AuthController {
         final String password = authenticationRequest.getPassword();
         log.debug("[POST] GETTING TOKEN FOR User " + username);
         JwtUser userDetails;
+        
+        log.debug(passwordEncoder.encode("adidas"));
 
         try {
             userDetails = (JwtUser) userDetailsService.loadUserByUsername(username);
@@ -169,6 +163,8 @@ public class AuthController {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         final String token = jwtUtil.generateToken(userDetails);
+        
+        log.trace(token);
         
         return new JwtAuthenticationResponse(token);
     }

@@ -1,9 +1,12 @@
 package com.andre.adidas.codechallenge.auth;
 
 import java.io.Serializable;
+import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.crypto.spec.SecretKeySpec;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,6 +15,7 @@ import org.springframework.stereotype.Component;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.impl.crypto.MacProvider;
 
 /**
  * Common helper methods to work with JWT
@@ -24,11 +28,25 @@ public class JwtUtil implements Serializable {
     private static final String CLAIM_KEY_ROLE = "role";
     private static final String CLAIM_KEY_CREATED = "created";
 
+//    private static final Key generatedSecret = MacProvider.generateKey();
     @Value("${auth.secret}")
     private String secret;
-
+    
     @Value("${auth.expires}")
     private Long expiration;
+    
+    private Key signingKey = null;
+    
+    private Key getSigningKey() {
+    	if(signingKey == null) {
+    		SecretKeySpec secretKeySpec = new SecretKeySpec(secret.getBytes(), SignatureAlgorithm.HS512.getJcaName());
+    		SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+    		byte[] apiKeySecretBytes = secretKeySpec.getEncoded(); 
+    		signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
+    	}
+    	
+    	return signingKey;
+	}
 
     /**
      * Returns user id from given token
@@ -126,12 +144,6 @@ public class JwtUtil implements Serializable {
         return refreshedToken;
     }
 
-    /**
-     * Checks token validity
-     * @param token to check
-     * @param userDetails to compare with
-     * @return true if token valid else false
-     */
     public Boolean validateToken(String token, UserDetails userDetails) {
         JwtUser user = (JwtUser) userDetails;
         final String username = getUsernameFromToken(token);
@@ -146,7 +158,7 @@ public class JwtUtil implements Serializable {
         Claims claims;
         try {
             claims = Jwts.parser()
-                    .setSigningKey(secret)
+                    .setSigningKey(getSigningKey())
                     .parseClaimsJws(token)
                     .getBody();
         } catch (Exception e) {
@@ -168,7 +180,7 @@ public class JwtUtil implements Serializable {
         return Jwts.builder()
                 .setClaims(claims)
                 .setExpiration(generateExpirationDate())
-                .signWith(SignatureAlgorithm.HS512, secret)
+                .signWith(SignatureAlgorithm.HS256, getSigningKey())
                 .compact();
     }
 
