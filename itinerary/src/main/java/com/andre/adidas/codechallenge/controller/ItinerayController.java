@@ -21,6 +21,7 @@ import com.andre.adidas.codechallenge.service.CityService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -35,10 +36,13 @@ public class ItinerayController {
 	private CityService courseService;
 
 	@GetMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	@ApiOperation(value = "Get the itinerary from two cities", response = Itinerary.class)
-	public ResponseEntity<Itinerary> calculate(@RequestParam("departure") String departureCityName,
-			@RequestParam("arrival") String arrivalCityName,
-			@RequestParam(value = "calcType", defaultValue = "DISTANCE") String calcType) {
+	@ApiOperation(value = "Get the itinerary from two cities",
+				  notes = "When calcType == DISTANCE, returns 'distanceCost' field with the cost spent between the two cities after the calculation"
+				  		+ "When calcType == TIME, leaves 'distanceCost' blank and do the calculation by the supposed time cost between the cities after the calculation",
+				  response = Itinerary.class)
+	public ResponseEntity<Itinerary> calculate(@ApiParam("Departure city name") @RequestParam("departure") String departureCityName,
+											   @ApiParam("Arrival city name") @RequestParam("arrival") String arrivalCityName,
+											   @RequestParam(value = "calcType", defaultValue = "DISTANCE") String calcType) {
 
 		if (departureCityName.equalsIgnoreCase(arrivalCityName)) {
 			throw new IllegalArgumentException(
