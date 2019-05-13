@@ -20,3 +20,10 @@
 2. make run-primary
 3. make run-second
 4. make run-last
+
+## Acessing
+The database will have the initial data with 50 cities and the user "adidas:adidas"
+To get the token: http://localhost:8080/gateway/authentication/v1/auth/signin
+
+## Docs
+http://localhost:8080/gateway/itinerary/swagger-ui.html
