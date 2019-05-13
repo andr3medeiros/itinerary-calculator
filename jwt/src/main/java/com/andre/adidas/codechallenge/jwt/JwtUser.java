@@ -1,4 +1,4 @@
-package com.andre.adidas.codechallenge.auth;
+package com.andre.adidas.codechallenge.jwt;
 
 import java.util.Collection;
 

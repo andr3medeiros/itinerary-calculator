@@ -16,16 +16,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.andre.adidas.codechallenge.auth.JwtAuthenticationRequest;
-import com.andre.adidas.codechallenge.auth.JwtAuthenticationResponse;
-import com.andre.adidas.codechallenge.auth.JwtUser;
-import com.andre.adidas.codechallenge.auth.JwtUtil;
 import com.andre.adidas.codechallenge.entities.Role;
 import com.andre.adidas.codechallenge.entities.User;
 import com.andre.adidas.codechallenge.exception.InvalidPasswordException;
 import com.andre.adidas.codechallenge.exception.UserAlreadyExistsException;
 import com.andre.adidas.codechallenge.exception.UserAuthenticationException;
 import com.andre.adidas.codechallenge.exception.UserNotFoundException;
+import com.andre.adidas.codechallenge.jwt.JwtAuthenticationRequest;
+import com.andre.adidas.codechallenge.jwt.JwtAuthenticationResponse;
+import com.andre.adidas.codechallenge.jwt.JwtUser;
+import com.andre.adidas.codechallenge.jwt.JwtUtil;
 import com.andre.adidas.codechallenge.services.RoleService;
 import com.andre.adidas.codechallenge.services.UserService;
 
@@ -47,7 +47,6 @@ public class AuthController {
 
     public final static String SIGNUP_URL = "/v1/auth/signup";
     public final static String SIGNIN_URL = "/v1/auth/signin";
-    public final static String REFRESH_TOKEN_URL = "/v1/auth/token/refresh";
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -99,13 +98,11 @@ public class AuthController {
 
         Role role = roleService.findDefault();
         userService.save(new User(username, email, password, role));
-        JwtUser userDetails;
-
+        
         try {
-            userDetails = (JwtUser) userDetailsService.loadUserByUsername(username);
-        } catch (UsernameNotFoundException ex) {
-            log.error(ex.getMessage());
-            throw new UserNotFoundException();
+        	if(userDetailsService.loadUserByUsername(username) == null) {
+        		throw new UserNotFoundException();
+        	}
         } catch (Exception ex) {
             log.error(ex.getMessage());
             throw new UserAuthenticationException(ex);
@@ -116,7 +113,8 @@ public class AuthController {
         );
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        final String token = jwtUtil.generateToken(userDetails);
+        String token = jwtUtil.createSignedJWT(authentication).serialize();
+		
         return new JwtAuthenticationResponse(token);
     }
 
@@ -156,23 +154,10 @@ public class AuthController {
         final Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        final String token = jwtUtil.generateToken(userDetails);
+        String token = jwtUtil.createSignedJWT(authentication).serialize();
         
         log.trace(token);
         
         return new JwtAuthenticationResponse(token);
     }
-
-    /**
-     * Refreshes token
-     * @param request with old JWT
-     * @return Refreshed JWT
-     */
-	/*
-	 * @PostMapping(REFRESH_TOKEN_URL) public JwtAuthenticationResponse
-	 * refreshAuthenticationToken(HttpServletRequest request) { String token =
-	 * request.getHeader(tokenHeader); log.debug("[POST] REFRESHING TOKEN"); String
-	 * refreshedToken = jwtUtil.refreshToken(token); return new
-	 * JwtAuthenticationResponse(refreshedToken); }
-	 */
 }

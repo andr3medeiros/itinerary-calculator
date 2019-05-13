@@ -1,4 +1,4 @@
-package com.andre.adidas.codechallenge.auth;
+package com.andre.adidas.codechallenge.jwt;
 
 import java.io.IOException;
 
@@ -67,17 +67,16 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 			if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 				UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
-				if (jwtTokenUtil.validateToken(authToken, userDetails)) {
-					UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-							userDetails, null, userDetails.getAuthorities());
-					authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-					logger.debug("Authenticated user " + username + ", setting security context");
-					SecurityContextHolder.getContext().setAuthentication(authentication);
-				}
+				jwtTokenUtil.validate(authToken);
+				
+				UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+						userDetails, null, userDetails.getAuthorities());
+				authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+				logger.debug("Authenticated user " + username + ", setting security context");
+				SecurityContextHolder.getContext().setAuthentication(authentication);
 			}
 		}
 
 		chain.doFilter(request, response);
 	}
-
 }

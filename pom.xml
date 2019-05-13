@@ -12,14 +12,17 @@
 
 	<groupId>com.andre.adidas.codechallenge</groupId>
 	<artifactId>adidas-code-challenge</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.1-SNAPSHOT</version>
 	<name>adidas-code-challenge</name>
 	<packaging>pom</packaging>
 
 	<modules>
+		<module>commons</module>
+		<module>jwt</module>
 		<module>service-discovery</module>
 		<module>gateway-service</module>
 		<module>authentication</module>
+		<module>itinerary-calculator</module>
 		<module>itinerary</module>
 	</modules>
 

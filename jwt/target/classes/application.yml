@@ -1,0 +1,6 @@
+# JWT Auth
+auth:
+  header: Authorization
+  secret: 1I6ORVjxMT77H8vKiPIBP801O8QkUq34
+  prefix: Bearer 
+  expires: 604800

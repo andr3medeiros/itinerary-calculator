@@ -5,17 +5,28 @@
 	<parent>
 		<groupId>com.andre.adidas.codechallenge</groupId>
 		<artifactId>adidas-code-challenge</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
-		<relativePath/>
+		<version>0.1-SNAPSHOT</version>
+		<relativePath>../</relativePath>
 	</parent>
 	
 	<artifactId>gateway-service</artifactId>
-	<name>gateway-service</name>
+	<version>0.0.1-SNAPSHOT</version>
 
 	<dependencies>
 		<dependency>
+			<groupId>com.andre.adidas.codechallenge</groupId>
+			<artifactId>jwt</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+	
+		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-netflix-zuul</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 	</dependencies>
 

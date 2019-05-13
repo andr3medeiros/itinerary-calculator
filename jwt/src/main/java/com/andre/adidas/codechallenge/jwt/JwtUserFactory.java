@@ -1,13 +1,13 @@
-package com.andre.adidas.codechallenge.auth;
+package com.andre.adidas.codechallenge.jwt;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import com.andre.adidas.codechallenge.entities.Role;
 import com.andre.adidas.codechallenge.entities.User;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public final class JwtUserFactory {
 

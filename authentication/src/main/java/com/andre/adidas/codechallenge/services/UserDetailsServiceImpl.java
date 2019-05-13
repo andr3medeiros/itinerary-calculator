@@ -1,4 +1,4 @@
-package com.andre.adidas.codechallenge.configuration;
+package com.andre.adidas.codechallenge.services;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,9 +11,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import com.andre.adidas.codechallenge.auth.JwtUser;
 import com.andre.adidas.codechallenge.entities.User;
-import com.andre.adidas.codechallenge.services.UserService;
+import com.andre.adidas.codechallenge.jwt.JwtUser;
 
 public class UserDetailsServiceImpl implements UserDetailsService {
 	@Autowired
