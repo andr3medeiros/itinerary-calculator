@@ -6,6 +6,7 @@
 		<groupId>com.andre.adidas.codechallenge</groupId>
 		<artifactId>adidas-code-challenge</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
+		<relativePath/>
 	</parent>
 	
 	<artifactId>gateway-service</artifactId>
@@ -19,11 +20,21 @@
 	</dependencies>
 
 	<build>
-		<finalName>gateway-service</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<fork>true</fork>
+					<skip>false</skip>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

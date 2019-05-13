@@ -1,0 +1,55 @@
+version: '3.1'
+
+services:
+  postgres:
+    image: postgres:9.6
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./volumes/postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: andre
+      POSTGRES_DB: itineraries
+      
+  service-discovery:
+      container_name: service-discovery
+      build: ./service-discovery
+      image: service-discovery:1.0.0
+      environment:
+        JAVA_OPTS: "-Dspring.profiles.active=docker"
+      ports:
+        - 8081
+        
+  gateway-service:
+      container_name: gateway-service
+      build: ./gateway-service
+      image: gateway-service:1.0.0
+      environment:
+        JAVA_OPTS: "-Dspring.profiles.active=docker"
+      ports:
+        - "8080:8080"
+        
+  authentication:
+      container_name: authentication
+      build: ./authentication
+      depends_on:
+        - postgres
+      image: authentication:1.0.0
+      environment:
+        JAVA_OPTS: "-Dspring.profiles.active=docker"
+      ports:
+        - 8083
+        
+  itinerary:
+      container_name: itinerary
+      build: ./itinerary
+      depends_on:
+        - postgres
+        - gateway-service
+        - authentication
+      image: itinerary:1.0.0
+      environment:
+        JAVA_OPTS: "-Dspring.profiles.active=docker"
+      ports:
+        - 8082

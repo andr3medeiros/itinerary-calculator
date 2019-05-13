@@ -7,28 +7,16 @@
 		<groupId>com.andre.adidas.codechallenge</groupId>
 		<artifactId>adidas-code-challenge</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
+		<relativePath/>
 	</parent>
 
 	<artifactId>itinerary-calculator</artifactId>
-	<name>itinerarie-service</name>
 
 	<properties>
 		<java.version>1.8</java.version>
 	</properties>
 
 	<dependencies>
-		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
-		<dependency>
-		    <groupId>com.fasterxml.jackson.core</groupId>
-		    <artifactId>jackson-databind</artifactId>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/com.github.javafaker/javafaker -->
-		<dependency>
-		    <groupId>com.github.javafaker</groupId>
-		    <artifactId>javafaker</artifactId>
-		    <version>0.17.2</version>
-		</dependency>
-		
 		<dependency>
 			<groupId>com.andre.adidas.codechallenge</groupId>
 			<artifactId>commons</artifactId>
@@ -41,15 +29,4 @@
 			<optional>true</optional>
 		</dependency>
 	</dependencies>
-
-	<build>
-		<finalName>itirerary-calculator</finalName>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
-
 </project>
