@@ -27,9 +27,6 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 	@Value("${auth.header}")
 	private String tokenHeader;
 
-	@Value("${auth.prefix}")
-	private String tokenPrefix;
-
 	/**
 	 * Injects UserDetailsService instance
 	 * 
@@ -62,10 +59,9 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
 			throws ServletException, IOException {
-
+		
 		String authToken = request.getHeader(this.tokenHeader);
 		if (authToken != null) {
-			authToken = authToken.replace(tokenPrefix, "").trim();
 			String username = jwtTokenUtil.getUsernameFromToken(authToken);
 
 			if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {

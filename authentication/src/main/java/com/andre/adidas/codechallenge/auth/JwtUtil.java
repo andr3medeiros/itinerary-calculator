@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.crypto.spec.SecretKeySpec;
+import javax.servlet.ServletException;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,10 +16,12 @@ import org.springframework.stereotype.Component;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Common helper methods to work with JWT
  */
+@Slf4j
 @Component
 public class JwtUtil implements Serializable {
 	private static final long serialVersionUID = -2630545757702775512L;
@@ -29,6 +32,9 @@ public class JwtUtil implements Serializable {
 
     @Value("${auth.secret}")
     private String secret;
+    
+	@Value("${auth.prefix}")
+	private String tokenPrefix;
     
     @Value("${auth.expires}")
     private Long expiration;
@@ -65,14 +71,16 @@ public class JwtUtil implements Serializable {
      * Returns username from given token
      * @param token JSON Web Token
      * @return username
+     * @throws ServletException 
      */
-    public String getUsernameFromToken(String token) {
+    public String getUsernameFromToken(String token) throws ServletException {
         String username;
         try {
             final Claims claims = getClaimsFromToken(token);
             username = claims.getSubject();
         } catch (Exception e) {
-            username = null;
+        	username = null;
+        	throw new ServletException(e);
         }
         return username;
     }
@@ -141,7 +149,7 @@ public class JwtUtil implements Serializable {
         return refreshedToken;
     }
 
-    public Boolean validateToken(String token, UserDetails userDetails) {
+    public Boolean validateToken(String token, UserDetails userDetails) throws ServletException {
         JwtUser user = (JwtUser) userDetails;
         final String username = getUsernameFromToken(token);
         if(username == null) {
@@ -151,15 +159,18 @@ public class JwtUtil implements Serializable {
         }
     }
 
-    private Claims getClaimsFromToken(String token) {
+    private Claims getClaimsFromToken(String token) throws ServletException {
+    	token = token.replace(tokenPrefix, "").trim();
+		
         Claims claims;
         try {
             claims = Jwts.parser()
-                    .setSigningKey(getSigningKey())
+                    .setSigningKey(secret)
                     .parseClaimsJws(token)
                     .getBody();
         } catch (Exception e) {
-            claims = null;
+        	claims = null;
+        	throw new ServletException(e);
         }
         return claims;
     }

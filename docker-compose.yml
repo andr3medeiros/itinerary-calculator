@@ -47,9 +47,9 @@ services:
       depends_on:
         - postgres
         - gateway-service
-        - authentication
       image: itinerary:1.0.0
       environment:
         JAVA_OPTS: "-Dspring.profiles.active=docker"
       ports:
         - 8082
+        - 8000:8000
