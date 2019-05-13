@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.impl.crypto.MacProvider;
 
 /**
  * Common helper methods to work with JWT
@@ -28,7 +27,6 @@ public class JwtUtil implements Serializable {
     private static final String CLAIM_KEY_ROLE = "role";
     private static final String CLAIM_KEY_CREATED = "created";
 
-//    private static final Key generatedSecret = MacProvider.generateKey();
     @Value("${auth.secret}")
     private String secret;
     
@@ -40,9 +38,8 @@ public class JwtUtil implements Serializable {
     private Key getSigningKey() {
     	if(signingKey == null) {
     		SecretKeySpec secretKeySpec = new SecretKeySpec(secret.getBytes(), SignatureAlgorithm.HS512.getJcaName());
-    		SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
     		byte[] apiKeySecretBytes = secretKeySpec.getEncoded(); 
-    		signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
+    		signingKey = new SecretKeySpec(apiKeySecretBytes, SignatureAlgorithm.HS256.getJcaName());
     	}
     	
     	return signingKey;

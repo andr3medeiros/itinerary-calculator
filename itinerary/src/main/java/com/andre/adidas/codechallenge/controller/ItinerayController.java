@@ -32,41 +32,42 @@ import lombok.extern.slf4j.Slf4j;
 @Api(value = "Endpoints to calculate itineraries")
 public class ItinerayController {
 	@Autowired
-    private CityService courseService;
-    
-    @GetMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    @ApiOperation(value = "Get the itinerary from two cities", response = Itinerary.class)
-    public ResponseEntity<Itinerary> calculate(@RequestParam("departure") String departureCityName, 
-    						   @RequestParam("arrival") String arrivalCityName,
-    						   @RequestParam(value = "calcType", defaultValue = "DISTANCE") String calcType) {
-    	
-    	if(departureCityName.equalsIgnoreCase(arrivalCityName)) {
-    		throw new IllegalArgumentException("Sorry, but the cities have the same name and therfore we can't do any calculations");
-    	}
-    	
-    	Iterable<City> allCities = courseService.listAll();
-    	List<City> cities = new ArrayList<>();
-    	allCities.forEach(cities::add);
-    	
-    	Optional<City> departreCity = findCity(cities, departureCityName);
-    	if(!departreCity.isPresent()) {
-    		throw new IllegalArgumentException("City '" + departureCityName + "' not found");
-    	}
-    	
-    	Optional<City> arriavalCity = findCity(cities, arrivalCityName);
-    	if(!arriavalCity.isPresent()) {
-    		throw new IllegalArgumentException("City '" + arriavalCity + "' not found");
-    	}
-    	
-    	Itinerary itinerary = new Itinerary();
-    	itinerary.setDeparture(departreCity.get());
-    	itinerary.setArrival(arriavalCity.get());
+	private CityService courseService;
+
+	@GetMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ApiOperation(value = "Get the itinerary from two cities", response = Itinerary.class)
+	public ResponseEntity<Itinerary> calculate(@RequestParam("departure") String departureCityName,
+			@RequestParam("arrival") String arrivalCityName,
+			@RequestParam(value = "calcType", defaultValue = "DISTANCE") String calcType) {
+
+		if (departureCityName.equalsIgnoreCase(arrivalCityName)) {
+			throw new IllegalArgumentException(
+					"Sorry, but the cities have the same name and therfore we can't do any calculations");
+		}
+
+		Iterable<City> allCities = courseService.listAll();
+		List<City> cities = new ArrayList<>();
+		allCities.forEach(cities::add);
+
+		Optional<City> departreCity = findCity(cities, departureCityName);
+		if (!departreCity.isPresent()) {
+			throw new IllegalArgumentException("City '" + departureCityName + "' not found");
+		}
+
+		Optional<City> arriavalCity = findCity(cities, arrivalCityName);
+		if (!arriavalCity.isPresent()) {
+			throw new IllegalArgumentException("City '" + arriavalCity + "' not found");
+		}
+
+		Itinerary itinerary = new Itinerary();
+		itinerary.setDeparture(departreCity.get());
+		itinerary.setArrival(arriavalCity.get());
 		Calculator calculator = new Calculator(itinerary, cities);
-		
+
 		return new ResponseEntity<>(calculator.startParalel(CalcType.valueOf(calcType)), HttpStatus.OK);
-    }
-    
-    private Optional<City> findCity(List<City> cities, String cityName) {
-    	return cities.stream().filter(city -> city.getName().equalsIgnoreCase(cityName)).findFirst();
-    }
+	}
+
+	private Optional<City> findCity(List<City> cities, String cityName) {
+		return cities.stream().filter(city -> city.getName().equalsIgnoreCase(cityName)).findFirst();
+	}
 }

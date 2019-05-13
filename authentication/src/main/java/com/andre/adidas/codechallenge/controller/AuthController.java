@@ -1,7 +1,6 @@
 package com.andre.adidas.codechallenge.controller;
 
 import javax.persistence.NoResultException;
-import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,6 +29,8 @@ import com.andre.adidas.codechallenge.exception.UserNotFoundException;
 import com.andre.adidas.codechallenge.services.RoleService;
 import com.andre.adidas.codechallenge.services.UserService;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -38,6 +39,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @RestController
 @Slf4j
+@Api(value = "Endpoints to manage authentication")
 public class AuthController {
 
     @Value("${auth.header}")
@@ -57,28 +59,16 @@ public class AuthController {
     @Autowired
     private PasswordEncoder passwordEncoder;
     
-    /**
-     * Injects JwtUtil instance
-     * @param jwtUtil to inject
-     */
     @Autowired
     public void setJwtTokenUtil(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
     }
 
-    /**
-     * Injects UserDetailsService instance
-     * @param userDetailsService to inject
-     */
     @Autowired
     public void setUserDetailsService(UserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
 
-    /**
-     * Injects UserService instance
-     * @param userService to inject
-     */
     @Autowired
     public void setUserService(UserService userService) {
         this.userService = userService;
@@ -91,6 +81,7 @@ public class AuthController {
      * @throws AuthenticationException
      */
     @PostMapping(SIGNUP_URL)
+    @ApiOperation(value = "Create new user in the databae and return authentication token to be used in future requests", response = JwtAuthenticationResponse.class)
     public JwtAuthenticationResponse createAuthenticationToken(@RequestBody JwtAuthenticationRequest authenticationRequest) {
 
         final String username = authenticationRequest.getUsername();
@@ -136,6 +127,9 @@ public class AuthController {
      * @throws AuthenticationException
      */
     @PostMapping(SIGNIN_URL)
+    @ApiOperation(value = "Return authentication token to be used in future requests if the credenttial were correct", 
+    			  response = JwtAuthenticationResponse.class,
+    			  notes = "Email can be omited")
     public JwtAuthenticationResponse getAuthenticationToken(@RequestBody JwtAuthenticationRequest authenticationRequest) {
 
         final String username = authenticationRequest.getUsername();
@@ -174,11 +168,11 @@ public class AuthController {
      * @param request with old JWT
      * @return Refreshed JWT
      */
-    @PostMapping(REFRESH_TOKEN_URL)
-    public JwtAuthenticationResponse refreshAuthenticationToken(HttpServletRequest request) {
-        String token = request.getHeader(tokenHeader);
-        log.debug("[POST] REFRESHING TOKEN");
-        String refreshedToken = jwtUtil.refreshToken(token);
-        return new JwtAuthenticationResponse(refreshedToken);
-    }
+	/*
+	 * @PostMapping(REFRESH_TOKEN_URL) public JwtAuthenticationResponse
+	 * refreshAuthenticationToken(HttpServletRequest request) { String token =
+	 * request.getHeader(tokenHeader); log.debug("[POST] REFRESHING TOKEN"); String
+	 * refreshedToken = jwtUtil.refreshToken(token); return new
+	 * JwtAuthenticationResponse(refreshedToken); }
+	 */
 }

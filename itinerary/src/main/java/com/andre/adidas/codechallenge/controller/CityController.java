@@ -14,6 +14,7 @@ import com.andre.adidas.codechallenge.service.CityService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.Authorization;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -28,7 +29,7 @@ public class CityController {
     private CityService courseService;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    @ApiOperation(value = "List all cities", response = City[].class)
+    @ApiOperation(value = "List all cities", response = City[].class, authorizations = @Authorization("Bearer") )
     public ResponseEntity<Iterable<City>> list(Pageable pageable) {
         return new ResponseEntity<>(courseService.list(pageable), HttpStatus.OK);
     }

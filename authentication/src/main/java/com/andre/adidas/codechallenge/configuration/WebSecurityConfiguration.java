@@ -80,11 +80,10 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                         "/**/*.css",
                         "/**/*.js"
                 ).permitAll()
-                .antMatchers("/**/swagger-ui.html").permitAll()
+                .antMatchers("/v1/auth/**", "/**/swagger-ui.html").permitAll()
                 .antMatchers(HttpMethod.GET, "/**/swagger-resources/**", "/**/webjars/springfox-swagger-ui/**", "/**/v2/api-docs/**").permitAll()
                 .antMatchers(HttpMethod.POST,"/test/**").permitAll()
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
-                .antMatchers("/v1/auth/**").permitAll()
                 .anyRequest().authenticated();
 //
 //        httpSecurity
