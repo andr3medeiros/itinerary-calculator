@@ -1,3 +1,6 @@
+install:
+	mvn install -Dmaven.test.skip=true
+	
 run-primary:
 	docker-compose up -d service-discovery
 
