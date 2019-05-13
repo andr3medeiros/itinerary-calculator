@@ -22,7 +22,7 @@
 4. make run-last
 
 ## Acessing
-The database will have the initial data with 50 cities and the user "adidas:adidas"
+The database will have the initial data if 50 cities and the user "adidas:adidas"  
 To get the token: http://localhost:8080/gateway/authentication/v1/auth/signin
 
 ## Docs
